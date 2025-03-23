@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: KeyWordJunitTest.LoginTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 6.1 s <<< FAILURE! - in KeyWordJunitTest.LoginTest
+KeyWordJunitTest.LoginTest.test_login  Time elapsed: 6.05 s  <<< ERROR!
+java.lang.IllegalStateException: The path to the driver executable The path to the driver executable must be set by the webdriver.chrome.driver system property; for more information, see https://chromedriver.chromium.org/. The latest version can be downloaded from https://chromedriver.chromium.org/downloads
+	at KeyWordJunitTest.LoginTest.BeforeEach(LoginTest.java:15)
+
