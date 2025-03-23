@@ -1,0 +1,100 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-Latest'
+variables:
+- group: "apiFileVG"
+
+steps:
+- task: bash@3
+  displayName: 'Publish openapi into APICruio'
+  inputs:
+    targetType: 'inline'
+    failOnStderr: true
+    script: |
+      tempfile="$(Agent.TempDirectory)/tmp"
+      status=$(curl -ks -H "X-Registry-ArtifactId:student-management" -H "Content-Type: application/json" -d @./api/openapi.json --write-out %{http_code} -o $tempfile  http://apicurio.azurewebsites.net/api/artifacts/)
+      echo "Result code: $status"
+      if [[ $status > 201  ]] ; then
+        error=`cat $tempfile`
+        printf "Error was: $error"
+        exit 1
+      fi
+
+
+# - script: echo Hello, ING Architects!
+#   displayName: 'Run a one-line script'
+
+# - script: |
+#     echo Add other tasks to build, test, and deploy your project.
+#     echo See https://aka.ms/yaml
+#   displayName: 'Run a multi-line script'
+
+# - task: AzureFileCopy@4
+#   inputs:
+#     SourcePath: 'api'
+#     azureSubscription: 'Azure Blob Storage'
+#     Destination: 'AzureBlob'
+#     storage: 'servicemeshstorage'
+#     ContainerName: 'stm-api-templates'
+#     AdditionalArgumentsForBlobCopy: 
+
+# - task: FileContenttoVariable@2
+#   inputs:
+#     FilePath: 'api/openapi.json'
+#     VariableName: 'apiFile'
+#     AddNewlines: false
+
+# Command line
+# Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+# - task: CmdLine@2
+#   inputs:
+#     script: 'echo $(apiFile)'
+    #workingDirectory: # Optional
+    #failOnStderr: false # Optional
+
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: 'api'
+#     ArtifactName: 'drop-dev'
+#     publishLocation: 'Container'
+#     TargetPath: path
+
+ 
+# - task: PowerShell@2
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       $file_content = (Get-Content -Path "api/openapi.json" | Out-String) -replace "`n","" -replace "`r",""
+#       write-output '##vso[task.setvariable variable=REQUEST_BODY]$($file_content)'
+#   displayName: 'check file path'
+
+# - task: FileContenttoVariable@2
+#   inputs:
+#     FilePath: 'api/openapi.json'
+#     VariableName: 'apiFile'
+#     AddNewlines: false
+
+# - script: |
+#     echo ${path}
+#     echo '$(Build.BinariesDirectory)/api/openapi.json'
+#     echo '$(Build.BinariesDirectory)'
+#     echo $(apiFile)
+#     echo $(REQUEST_BODY)
+#   displayName: 'check file path'
+
+# - task: restCallBuildTask@0
+#   inputs:
+#     webserviceEndpoint: 'APICruio-Rest-Conn'
+#     relativeUrl: 
+#     httpVerb: 'POST'
+#     body: '$(REQUEST_BODY)'
+#     contentType: 'application/json'
+#     headers: '{"X-Registry-ArtifactId":"student-management"}'
+#     allowInvalidSSLCertificate: false

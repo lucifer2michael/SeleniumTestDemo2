@@ -1,0 +1,43 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+- task: AzureFileCopy@4
+  inputs:
+    SourcePath: 'api'
+    azureSubscription: 'Pay-As-You-Go(3)(3d8129f5-b648-4ef9-9ee6-35f9b169abd4)'
+    Destination: 'AzureBlob'
+    storage: 'servicemeshstorage'
+    ContainerName: 'STM-API-Templates'
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Azure Blob Storage'
+    subscriptionId: '3d8129f5-b648-4ef9-9ee6-35f9b169abd4'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'ServiceMesh-Demo'
+    location: 'Australia East'
+    templateLocation: 'Linked artifact'
+    csmFile: 'studentmanagement-service-master.template.json'
+    csmParametersFile: 'studentmanagement-service-parameters.json'
+    deploymentMode: 'Validation'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop-dev'
+    publishLocation: 'Container'
