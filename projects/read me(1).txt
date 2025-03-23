@@ -1,4 +1,0 @@
-1，cucumber的code是在planit-jupiter这个文件夹里。运行的时候显示有错误，我找不出来错误~
-2，page object model(selenium)的code放在gu-myapp这个文件夹里。运行的时候显示有错误，我找不出来错误~
-3，jenkins我按照老师教的来操作的，我没弄清楚老师上次课maven哪里有问题，我始终build不成功
-4，selenium grid不会写代码
